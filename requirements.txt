@@ -1,0 +1,18 @@
+# Runtime
+Django==5.2.17
+djangorestframework==3.18.1
+djangorestframework-simplejwt==5.5.1
+dj-database-url==3.1.2
+python-dotenv==1.2.3
+requests==2.34.2
+whitenoise==6.12.0
+gunicorn==26.2.0
+psycopg[binary]==3.3.6
+
+# Optional: only needed when MODERATION_PROVIDER=claude.
+# The API runs without it on the deterministic keyword moderator.
+anthropic==0.75.0
+
+# Development and tests
+factory-boy==3.3.3
+ruff==0.16.9
