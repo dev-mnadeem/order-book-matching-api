@@ -1,0 +1,33 @@
+[project]
+name = "tradecore-api"
+version = "1.0.0"
+description = "A Django REST API for accounts and posts, with pluggable enrichment and moderation providers."
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 96
+target-version = "py312"
+extend-exclude = ["*/migrations/*"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle
+    "F",    # pyflakes
+    "I",    # import sorting
+    "UP",   # pyupgrade
+    "B",    # bugbear
+    "C4",   # comprehensions
+    "DJ",   # Django-specific checks
+    "SIM",  # simplification
+    "RUF",  # ruff rules
+]
+ignore = [
+    "RUF012",  # Django class attributes are conventionally plain mutables
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tradecore/settings.py" = ["E501"]
+"tradecore_api/tests/*" = ["S101"]
+
+[tool.ruff.format]
+quote-style = "double"

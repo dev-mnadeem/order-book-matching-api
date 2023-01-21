@@ -1,0 +1,49 @@
+name: tradecore
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: tradecore
+      POSTGRES_USER: tradecore
+      POSTGRES_PASSWORD: tradecore
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tradecore -d tradecore"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    # Migrations run here rather than in the image's CMD so that scaling the
+    # service up does not race several copies of migrate against each other.
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             gunicorn tradecore.wsgi:application --bind 0.0.0.0:8000 --workers 3 --access-logfile -"
+    environment:
+      DATABASE_URL: postgres://tradecore:tradecore@db:5432/tradecore
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-compose-dev-key-change-me}
+      DJANGO_DEBUG: "false"
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      DJANGO_SECURE_SSL_REDIRECT: "false"
+      # Unset by default, so the offline providers are used and the stack
+      # comes up with no third-party account.
+      ABSTRACT_GEOLOCATION_API_KEY: ${ABSTRACT_GEOLOCATION_API_KEY:-}
+      ABSTRACT_HOLIDAYS_API_KEY: ${ABSTRACT_HOLIDAYS_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+volumes:
+  postgres_data:
