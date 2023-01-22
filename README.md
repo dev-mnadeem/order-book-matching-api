@@ -265,3 +265,16 @@ build time. Migrations run from the compose command rather than the image's
 - The client IP comes from `X-Forwarded-For` when present, which is
   attacker-controlled behind an untrusted proxy. It decorates the account and
   never informs an authorisation decision.
+
+## Verified native API run
+
+![Authenticated native posts API responses](docs/screenshots/native-api.png)
+
+A disposable SQLite database and the offline keyword/null providers were used
+for registration, login, post creation, and filtered listing over HTTP.
+[Captured responses](docs/native-api.json) omit login credentials and tokens.
+The repository name is historical; this application implements posts and likes.
+
+## Author
+
+[**Muhammad Nadeem**](https://github.com/dev-mnadeem)
